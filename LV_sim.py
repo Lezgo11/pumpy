@@ -11,11 +11,13 @@ from dolfinx.plot import vtk_mesh
 from dolfinx.nls.petsc import NewtonSolver
 from dolfinx.fem.petsc import NonlinearProblem
 from utils import compute_fiber_angle
+
+#Remember to always activate fenicsx first: conda activate fenicsx
 #------ Simulation parameters ------
 # Time parameters
-T = 1.0            # final time
-num_steps = 20    # number of time steps
-dt = T / num_steps # time step size
+T = 1.0             # final time
+num_steps = 20      # number of time steps
+dt = T / num_steps  # time step size
 # Time stepping
 displacement_norms = []
 times = []
