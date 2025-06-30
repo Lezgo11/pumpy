@@ -10,31 +10,21 @@ import pyvista as pv
 from dolfinx.plot import vtk_mesh
 from dolfinx.nls.petsc import NewtonSolver
 from dolfinx.fem.petsc import NonlinearProblem
-from utils import compute_fiber_angle
+from utils import compute_fiber_angle, setup_function_space, define_neo_hookean, atrial_pressure
 
 #Remember to always activate fenicsx first: conda activate fenicsx
-#------ Simulation parameters ------
-# Time parameters
-T = 1.0             # final time
-num_steps = 20      # number of time steps
-dt = T / num_steps  # time step size
-# Time stepping
-displacement_norms = []
-times = []
 
 #------ Mesh and Function Space Setup ------
 # Create unit cube mesh with hexahedral elements
-domain, cell_tags, facet_tags = gmshio.read_from_msh("mesh/idealized_LV.msh", MPI.COMM_WORLD, gdim=3)
+domain, cell_tags, facet_tags = gmshio.read_from_msh("mesh/hollow_sphere_LA.msh", MPI.COMM_WORLD, gdim=3)
 # Define the element type and function space
-element = basix.ufl.element(
-    family="Lagrange",  # or "CG"
-    cell="tetrahedron",  # since your mesh is hexahedral
-    degree=1,
-    shape=(3,),  # Vector element for 3D displacement
-    dtype=PETSc.ScalarType,
-)
-V = fem.functionspace(domain, element)
+V = setup_function_space(domain)
 
+#------ Boundary Conditions ------
+fdim = domain.topology.dim - 1
+boundary_dofs = fem.locate_dofs_topological(V, fdim, facet_tags.indices[facet_tags.values == 40]) # Mitral Valve opening(Physical Group tag = 40)
+zero_vector = np.zeros(3, dtype=PETSc.ScalarType)
+bc = fem.dirichletbc(zero_vector, boundary_dofs, V)# Apply zero displacement BC on the up face
 
 #------ Material parameters ------
 E_base = 1e5
@@ -45,58 +35,34 @@ lmbda = fem.Constant(domain, PETSc.ScalarType(E_base*nu / ((1+nu)*(1-2*nu))))#lm
 # Fiber orientation for anisotropy
 fiber_direction = fem.Constant(domain, PETSc.ScalarType((1.0, 0.0, 0.0)))
 
-
-
-
-#------ Boundary Conditions ------
-def base_boundary(x): # fix base
-    return np.isclose(x[0], 0.0)
-fdim = domain.topology.dim - 1
-boundary_facets = mesh.locate_entities_boundary(domain, fdim, base_boundary)
-boundary_dofs = fem.locate_dofs_topological(V, fdim, facet_tags.indices[facet_tags.values == 50]) # Get left boundary facets (Physical Group tag = 50)
-zero_vector = np.zeros(3, dtype=PETSc.ScalarType)
-bc = fem.dirichletbc(zero_vector, boundary_dofs, V)# Apply zero displacement BC on the up face
-
-
 # ------ Define functions ------ 
-u = fem.Function(V, name="Displacement")
-v = ufl.TestFunction(V)
-du = ufl.TrialFunction(V)
-# Kinematics
-I = ufl.Identity(domain.geometry.dim)
-F = I + ufl.grad(u)
-C = F.T * F
-J = ufl.det(F)
 # Neo-Hookean model
-psi = (mu/2)*(ufl.tr(C) - 3) - mu*ufl.ln(J) + (lmbda/2)*(ufl.ln(J))**2
-# Variational form
-Pi = psi * ufl.dx
-F_res = ufl.derivative(Pi, u, v)
-J = ufl.derivative(F_res, u, du)
-
-right_facets = facet_tags.indices[facet_tags.values == 10]
+u,v,Pi,F_res,J = define_neo_hookean(mu, lmbda,domain,V)
+right_facets = facet_tags.indices[facet_tags.values == 20] # Over pulmonary valves R and L
 mt = facet_tags
 ds = ufl.Measure("ds", domain=domain, subdomain_data=mt)
 
-# Pressure loading function
-def get_pressure(t): # ONLY FOR LV
-    tau = (t%T) / T
-    f = np.where(tau < 0.5, 100 * np.sin(np.pi * tau)**2, 0.0)
-    return f #1e2 * np.sin(2*np.pi*t/T)
-
-
-# PyVista setup
+# ------ PyVista setup ------
 pv.OFF_SCREEN = True  # For headless rendering if needed
 plotter = pv.Plotter(off_screen=True)
-plotter.open_gif("deformation_idealizedLV.gif", fps=5)
+plotter.open_gif("deformation_idealizedLA.gif", fps=5)
+
+#------ Simulation parameters ------
+# Time parameters
+T = 1.0             # final time
+num_steps = 20      # number of time steps
+dt = T / num_steps  # time step size
+# Time stepping
+displacement_norms = []
+times = []
 
 # ------ Time stepping loop ------
 for n in range(num_steps):
     t = (n+1)*dt
-    p_ext = get_pressure(t)
-    print("Pressure value at t =", t, "is", get_pressure(t))
+    p_ext = atrial_pressure(t,T)
+    print("Pressure value at t =", t, "is", atrial_pressure(t,T))
     traction = fem.Constant(domain, PETSc.ScalarType((0.0, 0.0, p_ext)))
-    L = ufl.dot(traction, v) * ds(10)
+    L = sum(ufl.dot(traction, v) * ds(i) for i in [20, 50]) # Pulmonary veins R+L
 
     # Create new problem with updated residual (F_res - L)
     problem = NonlinearProblem(F_res - L, u, [bc], J=J)
