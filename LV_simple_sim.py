@@ -45,7 +45,7 @@ ds = ufl.Measure("ds", domain=domain, subdomain_data=mt)
 # ------ PyVista setup ------
 pv.OFF_SCREEN = True  # For headless rendering if needed
 plotter = pv.Plotter(off_screen=True)
-plotter.open_gif("deformation_idealizedLV.gif", fps=5)
+plotter.open_gif("figs/deformation_idealizedLV.gif", fps=5)
 
 #------ Simulation parameters ------
 # Time parameters
@@ -110,5 +110,5 @@ if domain.comm.rank == 0:
     plt.ylabel("Displacement Norm [L2]")
     plt.title("Displacement Response Over Time")
     plt.grid(True)
-    plt.savefig("displacement_IdealizedLV.png")
+    plt.savefig("figs/displacement_IdealizedLV.png")
     plt.show()

@@ -86,7 +86,7 @@ def get_pressure(t):
 # PyVista setup
 pv.OFF_SCREEN = True  # For headless rendering if needed
 plotter = pv.Plotter(off_screen=True)
-plotter.open_gif("deformation_from_level2solid.gif", fps=5)
+plotter.open_gif("def_cube.gif", fps=5)
 
 # Time stepping
 displacement_norms = []

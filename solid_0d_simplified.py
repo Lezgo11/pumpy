@@ -11,18 +11,6 @@ import numpy as np
 import pyvista as pv
 
 
-# read H5 file
-#pc = h5.File('UKBRVLV.h5', 'r')
-# note that H5PY matrices in python are transposed
-# generate the first principal mode
-# with 1.5 times the standard deviation
-#S = np.transpose(pc['MU']) + (1.5 * np.sqrt(pc['LATENT'][0,0]) * pc['COEFF'][0,:])
-# get ED & ES points, & convert to 3 columns matrix [x, y, z]
-#N = S.shape[1] // 2
-#ed = np.reshape(S[0,:N], (-1,3))
-#es = np.reshape(S[0,N:], (-1,3))
-
-
 
 # Time parameters
 T = 1.0            # final time

@@ -9,10 +9,16 @@ import pyvista as pv
 from dolfinx.plot import vtk_mesh
 from dolfinx.nls.petsc import NewtonSolver
 from dolfinx.fem.petsc import NonlinearProblem
-from utils import setup_function_space, define_neo_hookean, atrial_pressure
+from utils import setup_function_space, define_neo_hookean, atrial_pressure, ventricular_pressure
 
 
 def simulate_chamber(mesh_path,bc_tags,pressure_tags,pressure_function):
+    if mesh_path == "mesh/hollow_sphere_LA.msh":
+        LV_name = "LA"
+    elif mesh_path == "mesh/idealized_LV.msh":
+        LV_name = "LV"
+    else:
+        raise ValueError("Unsupported mesh path. Use 'mesh/hollow_sphere_LA.msh' or 'mesh/idealized_LV.msh'.")
     #------ Mesh and Function Space Setup ------
     domain, cell_tags, facet_tags = gmshio.read_from_msh(mesh_path, MPI.COMM_WORLD, gdim=3)
     V = setup_function_space(domain)
@@ -37,8 +43,7 @@ def simulate_chamber(mesh_path,bc_tags,pressure_tags,pressure_function):
     # ------ PyVista setup ------
     pv.OFF_SCREEN = False  # For headless rendering if needed
     plotter = pv.Plotter(off_screen=False)
-    plotter.open_gif("deformation_idealizedLA.gif", fps=5)
-
+    plotter.open_gif(f"figs/deformation_idealized{LV_name}.gif", fps=5)
     #------ Simulation parameters ------
     # Time parameters
     T = 1.0             # final time
@@ -93,7 +98,7 @@ def simulate_chamber(mesh_path,bc_tags,pressure_tags,pressure_function):
             
             print(f"Step {n+1}, Time {t:.2f}, Displacement Norm = {disp_norm:.4e}")
     
-    plotter.show()  # Do not call show() in off-screen mode
+    plotter.show()
     plotter.close()
     # Plot results
     if domain.comm.rank == 0:
@@ -103,7 +108,7 @@ def simulate_chamber(mesh_path,bc_tags,pressure_tags,pressure_function):
         plt.ylabel("Displacement Norm [L2]")
         plt.title("Displacement Response Over Time")
         plt.grid(True)
-        plt.savefig("displacement_IdealizedLV.png")
+        plt.savefig(f"figs/displacement_Idealized{LV_name}.png")
         plt.show()
 
 
@@ -113,3 +118,4 @@ if __name__ == "__main__":
                     bc_tags=[40],
                     pressure_tags=[20, 50],
                     pressure_function=atrial_pressure)
+    

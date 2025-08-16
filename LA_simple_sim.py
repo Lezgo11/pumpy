@@ -10,7 +10,9 @@ import pyvista as pv
 from dolfinx.plot import vtk_mesh
 from dolfinx.nls.petsc import NewtonSolver
 from dolfinx.fem.petsc import NonlinearProblem
-from utils import compute_fiber_angle, setup_function_space, define_neo_hookean, atrial_pressure
+from materials import define_neo_hookean
+from pressures import atrial_pressure
+from utils import setup_function_space
 
 #Remember to always activate fenicsx first: conda activate fenicsx
 
@@ -38,7 +40,7 @@ fiber_direction = fem.Constant(domain, PETSc.ScalarType((1.0, 0.0, 0.0)))
 # ------ Define functions ------ 
 # Neo-Hookean model
 u,v,Pi,F_res,J = define_neo_hookean(mu, lmbda,domain,V)
-right_facets = facet_tags.indices[facet_tags.values == 20] # Over pulmonary valves R and L
+right_facets = facet_tags.indices[facet_tags.values == 10] # Over pulmonary valves R and L
 mt = facet_tags
 ds = ufl.Measure("ds", domain=domain, subdomain_data=mt)
 
@@ -49,8 +51,8 @@ plotter.open_gif("deformation_idealizedLA.gif", fps=5)
 
 #------ Simulation parameters ------
 # Time parameters
-T = 1.0             # final time
-num_steps = 20      # number of time steps
+T = 0.20             # final time
+num_steps = 30      # number of time steps
 dt = T / num_steps  # time step size
 # Time stepping
 displacement_norms = []
@@ -68,7 +70,7 @@ for n in range(num_steps):
     problem = NonlinearProblem(F_res - L, u, [bc], J=J)
     solver = NewtonSolver(MPI.COMM_WORLD, problem)
     solver.convergence_criterion = "incremental"
-    solver.rtol = 1e-6
+    solver.rtol = 1e-4
     num_its, converged = solver.solve(u)
     print(f"Converged: {converged}, iterations: {num_its}")
     
@@ -110,5 +112,5 @@ if domain.comm.rank == 0:
     plt.ylabel("Displacement Norm [L2]")
     plt.title("Displacement Response Over Time")
     plt.grid(True)
-    plt.savefig("displacement_IdealizedLV.png")
+    #plt.savefig("displacement_IdealizedLA.png")
     plt.show()
