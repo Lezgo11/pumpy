@@ -1,0 +1,163 @@
+Metadata-Version: 2.4
+Name: pumpy
+Version: 0.2.0
+Summary: Left-heart hemodynamics toy model (no FEniCSx). Level 1 features: soft valves, Starling, respiration.
+Author-email: You <you@example.com>
+License: MIT
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy>=1.23
+Requires-Dist: pandas>=2.0
+Requires-Dist: matplotlib>=3.5
+Requires-Dist: meshio>=5.3
+Requires-Dist: pytest>=8
+Dynamic: license-file
+
+# PumPy
+
+*A 3D heart simulator to never skip a beat!*
+
+by *lez* <3
+
+## What is PumPy?
+
+**PumPy** is a lightweight, Python-based heart simulator that models the dynamics of the atrium, ventricle and can be extended to performing full heart simulations! It’s designed mostly for geeky students and researchers who want to play with cardiovascular physiology without the hassle of full finite element solvers.
+
+Coding a heart from scratch is hard. Tuning it until it “looks right” is harder: at its core, PumPy couples **time-varying elastance models**, **valve dynamics**, and a **Windkessel afterload** into a neat ODE system. This will give you pretty PV loops and waveforms.
+
+* **Supported modes:**
+  * `la` → left atrium only
+  * `lv` → left ventricle only
+  * `la_lv` → a coupled left heart
+  * `full` → extended full heart coupling (left heart + right heart + pulmonary circulation)
+
+* **Physiological features:**
+  * Time-varying elastance (ventricular and atrial)
+  * Passive filling curves (EDPVR)
+  * Starling effect (preload-dependent contractility)
+  * Soft valves with smooth opening fractions
+  * Systemic afterload (2-element Windkessel with venous baseline)
+  * Pulmonary venous inflow with optional respiration modulation
+
+* **Outputs:**
+  You can extract CSV logs for all variables, plus auto-generated plots:
+  * Pressure–volume loops (LA, LV)
+  * Time-series traces (pressures, flows, valve states)
+
+* **Test coverage:**
+  pytest test integration that runs a no-mesh simulation and confirms values are within physiological ranges.
+
+## Installation
+
+Clone the repo, then install with pip:
+
+```bash
+git clone https://github.com/lezgo11/pumpy.git
+cd pumpy
+pip install -e .
+pip install -r requirements.txt
+```
+
+## Quickstart
+Run the simulator straight from the command line:
+
+```bash
+pumpy-run --mode la_lv --beats 5
+```
+
+### Examples
+
+Example scripts live in `examples/`:
+
+* `run_la.py` → LA only
+* `run_lv.py` → LV only
+* `run_la_lv.py` → coupled left heart
+* `run_full.py` → full heart extension
+* `run_nomesh.py` → quick test without meshes (great for CI/tests)
+
+This produces:
+
+* `outputs/left_heart_simple_log.csv`
+* `outputs/pv_lv.csv`
+* `outputs/pv_la.csv`
+* `outputs/*.png` plots
+
+You can also disable meshes explicitly:
+
+```bash
+pumpy-run --mode la_lv --la-mesh "" --lv-mesh "" --beats 6
+```
+
+## Use your own mesh
+
+By default, pumpy will used idealized meshes:
+
+* `mesh/idealized_LA.msh`
+* `mesh/idealized_LV.msh`
+
+You can override with `--la-mesh` / `--lv-mesh`. Units are assumed meters.
+
+## Tuning physiology parameters
+
+The fun part of PumPy is tweaking parameters and seeing how loops shift.
+
+* **Elastance**:
+
+  ```bash
+  pumpy-run --mode la_lv --E-la-min 0.2 --E-la-max 0.6
+  ```
+
+  Adjusts LA stiffness, directly changing LA loop width and pressure.
+
+* **Afterload**:
+  Tune systemic R and C in `ode.py` to shift MAP and pulse pressure.
+
+* **Filling resistance (R\_pv)**:
+  Controls preload (EDV). Lower R\_pv → larger loops.
+
+* **Starling gain**:
+  Positive feedback between EDV and contractility. Keep ≤0.3 for stability.
+
+## Testing
+
+Run the included pytest:
+
+```bash
+pytest -q
+```
+
+It will:
+
+* Run a no-mesh LA+LV simulation.
+* Check that CSVs are generated.
+* Verify LV volumes/pressures and LA volumes/pressures fall in physiological ranges.
+
+## Philosophy
+
+PumPy is not a clinical model. It’s a fun atarting point to learn, experiment, and have fun with physiology. The code is, for this reason, as **simple, hackable, and modular** as possible, so you are able (and more than welcome) to tweak it:
+
+* Add new afterload models (3-element Windkessel).
+* Add failure presets (HFpEF, HFrEF, hypertension).
+* Connect to your own data assimilation pipelines.
+* Or just generate pretty PV loops for your slides.
+
+---
+
+## Contributing
+
+PRs welcome! If you’ve got ideas for new presets, better valve dynamics, or fun visualizations, send them in.
+Bug reports and feature requests via [email](leslyperlaza@gmail.com).
+
+
+## Credits
+
+* **dev:** lez
+* **motivation** This is originally a project for my Sustainable Computational Engineering. Thanks to Anil and Ana for making me come up with something cool!
+* **inspiration** countless physiology diagrms i never full grasped and too many nights debugging pressure units in m bachelors.
+
+---
+
+## License
+
+MIT: Free to use, hack, and share. See [License](LICENSE) for more info.

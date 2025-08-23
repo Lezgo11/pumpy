@@ -3,5 +3,3 @@ pandas>=2.0
 matplotlib>=3.5
 meshio>=5.3
 pytest>=8
-
--e .

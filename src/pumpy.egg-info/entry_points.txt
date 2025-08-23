@@ -1,0 +1,2 @@
+[console_scripts]
+pumpy-run = pumpy.cli:main
