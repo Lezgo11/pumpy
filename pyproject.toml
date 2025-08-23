@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pumpy"
+version = "0.1.0"
+description = "A comprehensive cardiac simulation package to never skip a beat in your research."
+readme = "README.md"
+authors = [{name = "Lez", email = "leslyperlaza@gmail.com"}]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "ufl",
+    "basix",
+    "mpi4py",
+    "petsc4py",
+    "fenics-dolfinx",
+    "pandas",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "black", "flake8", "mypy", "pre-commit"]
+docs = ["sphinx", "sphinx-rtd-theme", "myst-parser"]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/cardiac-sim"
+Documentation = "https://cardiac-sim.readthedocs.io/"
+Repository = "https://github.com/yourusername/cardiac-sim"
+Issues = "https://github.com/yourusername/cardiac-sim/issues"
+
+[project.scripts]
+cardiac-sim = "cardiac_sim.cli:main"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
