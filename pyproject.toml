@@ -9,7 +9,7 @@ description = "Left-heart hemodynamics toy model (no FEniCSx). Level 1 features:
 authors = [{name = "You", email = "you@example.com"}]
 readme = "README.md"
 license = {text = "MIT"}
-requires-python = ">=3.12"
+requires-python = ">=3.9"
 dependencies = [
   "numpy>=1.23",
   "pandas>=2.0",
