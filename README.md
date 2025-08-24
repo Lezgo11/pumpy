@@ -2,8 +2,6 @@
 
 *A heart simulator to never skip a beat!*
 
-## What is PumPy?
-
 **PumPy** is a lightweight, Python-based heart simulator that models the dynamics of the Atrium Ventricle and models a full heart simulation! It’s designed mostly with students and researchers in mind, who want to pla around with cardiovascular physiology without the hassle and complexity of full finite element solvers.
 
 Coding a heart from scratch is hard. Tuning it until it it's right is harder; PumPy unifies a time-varying elastance models, a valve dynamics module, and a Windkessel afterload model into an ODE system to obtain PV physiologically meaningful PV loops and time series data!
@@ -311,7 +309,7 @@ Bug reports and feature requests by [email](leslyperlaza@gmail.com).
 ## Credits
 
 * **dev:** Lez
-* **Motivation**: This code is part of the Sustainable Computational Engineering course at RWTH Aachen. Many thanks to the course Lecturer and supervisor, Anil and Ana, for the inspiration and tips!
+* **Motivation**: This project was develop as part of the Sustainable Computational Engineering course at RWTH Aachen University. Many thanks to the SCE Team, Dr. Anil Yildiz and Anna Simson, for the supervision and feedback!
 * **Inspiration:** countless sleepless nights studying physiology diagrams suring my bachelors. Also, the medical community.
 
 ---
