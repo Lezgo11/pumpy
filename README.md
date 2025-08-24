@@ -13,7 +13,7 @@ Coding a heart from scratch is hard. Tuning it until it “looks right” is har
 Clone the repo, then install with pip:
 
 ```bash
-git clone https://github.com/lez/pumpy.git
+git clone https://github.com/Lezgo11/pumpy.git
 cd pumpy
 pip install -r requirements.txt
 ```
