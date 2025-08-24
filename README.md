@@ -6,7 +6,7 @@
 
 **PumPy** is a lightweight, Python-based heart simulator that models the dynamics of the Atrium Ventricle and models a full heart simulation! It’s designed mostly with students and researchers in mind, who want to pla around with cardiovascular physiology without the hassle and complexity of full finite element solvers.
 
-Coding a heart from scratch is hard. Tuning it until it “looks right” is harder; PumPy unifies a time-varying elastance models, a valve dynamics module, and a Windkessel afterload model into an ODE system. The result: pressure–volume loops and waveforms that look and feel physiologically real.
+Coding a heart from scratch is hard. Tuning it until it “looks right” is harder; PumPy unifies a time-varying elastance models, a valve dynamics module, and a Windkessel afterload model into an ODE system to obtain PV physiologically meaningful PV loops and time series data!
 
 ## Installation
 
