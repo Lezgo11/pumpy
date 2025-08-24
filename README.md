@@ -15,6 +15,7 @@ Clone the repo, then install with pip:
 ```bash
 git clone https://github.com/Lezgo11/pumpy.git
 cd pumpy
+pip install -e .
 pip install -r requirements.txt
 ```
 
