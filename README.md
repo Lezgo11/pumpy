@@ -246,8 +246,6 @@ Defaults are chosen so a healthy LV lands near \~120/80 mmHg with SV ≈ 60–80
 
 </details>
 
----
-
 ### Frank–Starling feedback
 
 <details>
@@ -262,7 +260,6 @@ Scales LV contractility based on how full the ventricle is relative to a referen
 
 </details>
 
----
 
 ## Testing
 
