@@ -312,7 +312,7 @@ Bug reports and feature requests by [email](leslyperlaza@gmail.com).
 
 * **dev:** Lez
 * **Motivation**: This code is part of the Sustainable Computational Engineering course at RWTH Aachen. Many thanks to the course Lecturer and supervisor, Anil and Ana, for the inspiration and tips!
-* **Inspiration:** countless sleepless nights studying physiology diagrams suring my bachelors.
+* **Inspiration:** countless sleepless nights studying physiology diagrams suring my bachelors. Also, the medical community.
 
 ---
 
