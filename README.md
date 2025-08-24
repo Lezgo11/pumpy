@@ -24,7 +24,7 @@ pip install -r requirements.txt
 Run the simulator straight from the command line:
 
 ```bash
-pumpy-run --mode la_lv --beats 5 --log_dir="outputs/left_heart_example"
+pumpy-run --mode la_lv --beats 5
 ```
 
 This produces:
