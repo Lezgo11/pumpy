@@ -50,38 +50,6 @@ CSV logs for all variables, plus auto-generated plots (if activated) such as
 * Pressure–volume loops (LA, LV)
 * Time-series traces (pressures, flows, valve states)
 
-### Example calls
-
-<details>
-  <summary>Click here for more example calls</summary>
-
-##### 1. Run a steady, coupled left heart with plots:
-
-```bash
-pumpy-run --mode la_lv --beats 6 --hr 60 \
-  --la-mesh "" --lv-mesh "" \
-  --E-la-min 0.20 --resp-mmHg 2.0
-```
-
-##### 2. Higher afterload (hypertensive feel) and stiffer arteries:
-
-```bash
-pumpy-run --mode la_lv --beats 6 \
-  --la-mesh "" --lv-mesh "" \
-  --E-la-min 0.18 --resp-mmHg 1.0
-# Tip: in code or CLI, set R_sys≈2.2e8 and C_sys≈0.9e-8
-```
-
-##### 3. Use meshes in millimetres:
-
-```bash
-pumpy-run --mode la \
-  --la-mesh mesh/your_mesh.msh
-  --la-mesh-units mm
-```
-
-</details>
-
 ## Parameter tuning
 
 The key part of PumpPy is being able to tweak parameters and seeing their impact on the PV loop formation! The function `simulate()` allows for many parameters to be changed simoultaneosly. Here's an overview of the most important ones:
